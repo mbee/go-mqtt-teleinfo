@@ -169,7 +169,6 @@ func main() {
 			for token, value := range frame.tokens {
 				publish(fmt.Sprintf("teleinfo/%s", token), value)
 			}
-			_ = frame
 		}
 	}()
 
