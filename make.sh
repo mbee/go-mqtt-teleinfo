@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION=1.0.0
+VERSION=1.0.1
 
 echo fetch dependencies
 go get github.com/tarm/serial

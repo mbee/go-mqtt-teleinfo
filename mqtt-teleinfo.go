@@ -27,6 +27,26 @@ type frame struct {
 	tokens map[string]string
 }
 
+// strings.Split does not work as the checksum character could be ..... a space!
+func split(input []byte) [][]byte {
+	result := [][]byte{}
+	tail := input
+	for len(tail) != 0 {
+		if len(tail) == 1 {
+			result = append(result, tail)
+			return result
+		}
+		spacePos := bytes.Index(tail[1:], []byte(" "))
+		if spacePos == -1 {
+			result = append(result, tail)
+			return result
+		}
+		result = append(result, tail[0:spacePos+1])
+		tail = tail[spacePos+2:]
+	}
+	return result
+}
+
 func getNextFrame(port *serial.Port) (*frame, error) {
 	buffer := bufio.NewReader(port)
 	_, err := buffer.ReadSlice(0x2)
@@ -46,7 +66,7 @@ func getNextFrame(port *serial.Port) (*frame, error) {
 		tokens: map[string]string{},
 	}
 	for _, field := range fields {
-		tokens := bytes.Split(field, []byte(" "))
+		tokens := split(field)
 		if len(tokens) != 3 {
 			return nil, fmt.Errorf("invalid number of items => %s", field)
 		}
